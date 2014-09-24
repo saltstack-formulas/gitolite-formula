@@ -1,0 +1,11 @@
+{% set gitolite = {
+    'users': ['git'],
+    'shell': '/bin/bash',
+    'home': '/home',
+    'repository_url': 'https://github.com/sitaramc/gitolite.git',
+    'revision': 'v3.6.1',
+    'ssh_pubkey': Undefined
+  }
+%}
+
+{% do gitolite.update(salt['pillar.get']('gitolite')) %}

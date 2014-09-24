@@ -1,0 +1,10 @@
+gitolite:
+  shell: /bin/bash
+  home: /home
+  repository_url: https://github.com/sitaramc/gitolite.git
+  revision: v3.6.1
+  ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== admin@example.com # default admin key if user's ssh_pubkey is not defined
+  users:
+    - username: git
+      ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== git@example.com
+      shell: /bin/zsh
