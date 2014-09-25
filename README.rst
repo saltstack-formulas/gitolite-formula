@@ -2,7 +2,7 @@
 gitolite
 ========
 
-This formula sets up [gitolite][gitolite] service.
+This formula sets up gitolite service.
 
 .. note::
 
@@ -12,8 +12,8 @@ This formula sets up [gitolite][gitolite] service.
 Formula Dependencies
 ====================
 
-* [git][git]
-* [perl][perl]
+* git
+* perl
 
 Available states
 ================
