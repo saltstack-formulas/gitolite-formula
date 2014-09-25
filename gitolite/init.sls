@@ -1,8 +1,13 @@
+{% from "gitolite/defaults.jinja" import gitolite with context %}
+
 include:
   - git
   - perl
 
-{% from "gitolite/defaults.jinja" import gitolite with context %}
+{% if grains['os'] == 'Amazon' %}
+perl-Data-Dumper:
+  pkg.installed
+{% endif %}
 
 {% for user in gitolite.users %}
 
