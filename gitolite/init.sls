@@ -16,8 +16,9 @@ perl-Data-Dumper:
 {% set home = user.home if user.home is defined else gitolite.home + '/' + user.username %}
 {% set ssh_pubkey = user.ssh_pubkey if user.ssh_pubkey is defined else gitolite.ssh_pubkey %}
 
-{{ user.username }}:
+{{ user.username }}_user:
   user.present:
+    - name: {{ user.username }}
     - shell: {{ shell }}
     - home: {{ home }}
 
@@ -26,14 +27,14 @@ perl-Data-Dumper:
     - user: {{ user.username }}
     - mode: 700
     - require:
-      - user: {{ user.username }}
+      - user: {{ user.username }}_user
 
 {{ home }}/bin:
   file.directory:
     - user: {{ user.username }}
     - mode: 755
     - require:
-      - user: {{ user.username }}
+      - user: {{ user.username }}_user
 
 {{ home }}/gitolite:
   git.latest:
@@ -42,7 +43,7 @@ perl-Data-Dumper:
     - user: {{ user.username }}
     - target: {{ home }}/gitolite
     - require:
-      - user: {{ user.username }}
+      - user: {{ user.username }}_user
 
 {{ home }}/gitolite-admin.pub:
   file.managed:
