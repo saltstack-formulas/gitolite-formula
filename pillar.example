@@ -4,8 +4,14 @@ gitolite:
   repository_url: https://github.com/sitaramc/gitolite.git
   revision: v3.6.1
   ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== admin@example.com # default admin key if user's ssh_pubkey is not defined
+  ssh_pubkey_source': salt://ssh_keys  # default SSH pubkey source
   users:
     - username: git
       ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== git@example.com
       shell: /bin/zsh
       managed: True  # Manage via Salt; Include gitolite.managed!
+      gitolite_conf_source: salt://gitolite/files/my_gitolite.conf.jinja
+      ssh_pubkey_source: salt://ssh_keys  # May be ommitted
+      ssh_pubkeys:
+        - alice
+        - bob

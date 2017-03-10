@@ -25,3 +25,9 @@ Available states
 ------------
 
 Installs the gitolite environment for the users specified in the pillar.
+
+``gitolite.managed``
+------------
+
+Creates an admin user for each specified user and uses it to manage gitolite.
+You may add your very own (Jinja-enabled) gitolite.conf and add loads of pubkeys.
