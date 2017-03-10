@@ -1,0 +1,12 @@
+# This is just a simple example.
+# It does not make sense to reimplement the gitolite.conf
+# syntax in a pillar.
+#
+# Just override this file by creating your own in
+# /srv/salt/states/gitolite/files/gitolite.conf.jinja.
+
+repo gitolite-admin
+    RW+     =   gitolite-admin
+
+repo testing
+    RW+     =   @all

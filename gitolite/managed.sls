@@ -49,7 +49,46 @@ clone_admin_repo_{{ user.username }}:
     - rev: master
     - user: {{ admin_username }}
     - target: {{ admin_home }}/gitolite-admin
+    - force_reset: True
     - require:
       - cmd: setup_gitolite_{{ user.username }}
+
+set_name_admin_repo_{{ user.username }}:
+  cmd.run:
+    - name: "git config user.name 'Salt-generated gitolite-admin'"
+    - unless: "git config user.name | grep -q '.*'"
+    - user: {{ admin_username }}
+    - cwd: {{ admin_home }}/gitolite-admin
+    - require:
+      - git: clone_admin_repo_{{ user.username }}
+
+set_email_admin_repo_{{ user.username }}:
+  cmd.run:
+    - name: "git config user.email '{{ user.username }}@{{ grains['id'] }}'"
+    - unless: "git config user.email | grep -q '.*'"
+    - user: {{ admin_username }}
+    - cwd: {{ admin_home }}/gitolite-admin
+    - require:
+      - git: clone_admin_repo_{{ user.username }}
+
+{{ admin_home }}/gitolite-admin/conf/gitolite.conf:
+  file.managed:
+    - template: jinja
+    - source: {{ user.get("gitolite_conf_source", "salt://gitolite/files/gitolite.conf.jinja") }}
+    - user: {{ admin_username }}
+    - group: {{ admin_username }}
+    - require:
+      - git: clone_admin_repo_{{ user.username }}
+
+commit_changes_admin_repo_{{ user.username }}:
+  cmd.run:
+    - cwd: {{ admin_home }}/gitolite-admin
+    - user: {{ admin_username }}
+    - name: "git commit . -m 'Salt changed the config' && git push origin --all"
+    - onlyif: "git status --porcelain | grep -q '.*'"
+    - require:
+      - git: clone_admin_repo_{{ user.username }}
+      - cmd: set_name_admin_repo_{{ user.username }}
+      - cmd: set_email_admin_repo_{{ user.username }}
 
 {% endfor %}
