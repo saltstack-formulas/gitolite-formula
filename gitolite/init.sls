@@ -1,4 +1,6 @@
 {% from "gitolite/defaults.jinja" import gitolite with context %}
+{% from "gitolite/defaults.jinja" import get_home %}
+{% from "gitolite/defaults.jinja" import get_shell %}
 
 include:
   - git
@@ -11,9 +13,9 @@ perl-Data-Dumper:
 
 {% for user in gitolite.users %}
 
-# variables
-{% set shell = user.shell if user.shell is defined else gitolite.shell %}
-{% set home = user.home if user.home is defined else gitolite.home + '/' + user.username %}
+{# variables #}
+{% set shell = get_shell(user, gitolite) %}
+{% set home = get_home(user, gitolite) %}
 {% set ssh_pubkey = user.ssh_pubkey if user.ssh_pubkey is defined else gitolite.ssh_pubkey %}
 
 {{ user.username }}_user:

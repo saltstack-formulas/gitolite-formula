@@ -1,11 +1,19 @@
 {% set gitolite = {
-    'users': ['git'],
+    'users': [{'username': 'git'}],
     'shell': '/bin/bash',
     'home': '/home',
     'repository_url': 'https://github.com/sitaramc/gitolite.git',
     'revision': 'v3.6.1',
-    'ssh_pubkey': Undefined
+    'ssh_pubkey': 'Undefined'
   }
 %}
 
 {% do gitolite.update(salt['pillar.get']('gitolite')) %}
+
+{% macro get_shell(user, gitolite) -%}
+{{ user.shell if user.shell is defined else gitolite.shell }}
+{%- endmacro %}
+
+{% macro get_home(user, gitolite) -%}
+{{ user.home if user.home is defined else gitolite.home + '/' + user.username }}
+{%- endmacro %}
