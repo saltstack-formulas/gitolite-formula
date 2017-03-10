@@ -8,3 +8,4 @@ gitolite:
     - username: git
       ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== git@example.com
       shell: /bin/zsh
+      managed: True  # Manage via Salt; Include gitolite.managed!
