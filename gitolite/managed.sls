@@ -5,7 +5,7 @@
 include:
   - gitolite
 
-{% for user in gitolite.users %}
+{% for user in gitolite.users if user.get("managed", False) %}
 {% set home = get_home(user, gitolite) %}
 {% set shell = get_shell(user, gitolite) %}
 {% set admin_home = "{}-admin".format(home) %}
