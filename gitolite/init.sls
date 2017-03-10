@@ -55,6 +55,7 @@ install_gitolite_{{ user.username }}:
     - name: {{ home }}/gitolite/install -ln {{ home }}/bin
     - user: {{ user.username }}
     - cwd: {{ home }}
+    - creates: {{ home }}/bin/gitolite
     - require:
       - git: {{ home }}/gitolite
       - file: {{ home }}/bin
@@ -66,6 +67,8 @@ setup_gitolite_{{ user.username }}:
     - cwd: {{ home }}
     - env:
       - HOME: {{ home }}
+    - onchanges:
+      - file: {{ home }}/gitolite-admin.pub
     - require:
       - cmd: install_gitolite_{{ user.username }}
       - file: {{ home }}/gitolite-admin.pub
