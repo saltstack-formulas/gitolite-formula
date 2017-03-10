@@ -42,4 +42,14 @@ extend:
       - source: {{ admin_home }}/.ssh/id_rsa.pub
       - onchanges:
         - cmd: generate_{{ user.username }}_admin_key
+
+clone_admin_repo_{{ user.username }}:
+  git.latest:
+    - name: git@localhost:gitolite-admin.git
+    - rev: master
+    - user: {{ admin_username }}
+    - target: {{ admin_home }}/gitolite-admin
+    - require:
+      - cmd: setup_gitolite_{{ user.username }}
+
 {% endfor %}
