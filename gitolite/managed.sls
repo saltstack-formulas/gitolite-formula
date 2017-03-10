@@ -84,7 +84,7 @@ set_email_admin_repo_{{ user.username }}:
 {% for key in user.get("ssh_pubkeys", []) %}
 client_pubkey_{{key}}_admin_repo_{{ user.username }}:
   file.managed:
-    - name: {{ admin_home }}/gitolite-admin/keydir/{{ key }}.pub
+    - name: {{ admin_home }}/gitolite-admin/keydir/{{ key|replace("@", "_") }}.pub
     - user: {{ admin_username }}
     - group: {{ admin_username }}
     - source: {{ ssh_pubkey_source }}/{{ key }}.pub
