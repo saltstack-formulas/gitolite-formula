@@ -80,11 +80,25 @@ set_email_admin_repo_{{ user.username }}:
     - require:
       - git: clone_admin_repo_{{ user.username }}
 
+{% set ssh_pubkey_source = user.ssh_pubkey_source if "ssh_pubkey_source" in user else gitolite.ssh_pubkey_source %}
+{% for key in user.get("ssh_pubkeys", []) %}
+client_pubkey_{{key}}_admin_repo_{{ user.username }}:
+  file.managed:
+    - name: {{ admin_home }}/gitolite-admin/keydir/{{ key }}.pub
+    - user: {{ admin_username }}
+    - group: {{ admin_username }}
+    - source: {{ ssh_pubkey_source }}/{{ key }}.pub
+    - require:
+      - git: clone_admin_repo_{{ user.username }}
+    - require_in:
+      - cmd: commit_changes_admin_repo_{{ user.username }}
+{% endfor%}
+
 commit_changes_admin_repo_{{ user.username }}:
   cmd.run:
     - cwd: {{ admin_home }}/gitolite-admin
     - user: {{ admin_username }}
-    - name: "git commit . -m 'Salt changed the config' && git push origin --all"
+    - name: "git add --all . && git commit -m 'Salt changed the config' && git push origin --all"
     - onlyif: "git status --porcelain | grep -q '.*'"
     - require:
       - git: clone_admin_repo_{{ user.username }}
