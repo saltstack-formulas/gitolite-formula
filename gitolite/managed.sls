@@ -45,7 +45,7 @@ extend:
 
 clone_admin_repo_{{ user.username }}:
   git.latest:
-    - name: git@localhost:gitolite-admin.git
+    - name: git@{{ gitolite.admin_host }}:gitolite-admin.git
     - rev: master
     - user: {{ admin_username }}
     - target: {{ admin_home }}/gitolite-admin

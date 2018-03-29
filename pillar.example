@@ -5,6 +5,9 @@ gitolite:
   revision: v3.6.1
   ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== admin@example.com # default admin key if user's ssh_pubkey is not defined
   ssh_pubkey_source': salt://ssh_keys  # default SSH pubkey source
+  # In some setups SSH is not available on localhost
+  admin_host: localhost
+  #admin_host: my.host.test
   users:
     - username: git
       ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== git@example.com
