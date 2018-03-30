@@ -18,11 +18,23 @@ perl-Data-Dumper:
 {% set home = get_home(user, gitolite) %}
 {% set ssh_pubkey = user.ssh_pubkey if user.ssh_pubkey is defined else gitolite.ssh_pubkey %}
 
+{{ user.username }}_group:
+  group.present:
+    - name: {{ user.username }}
+{% if user.get('group_add', [])|length > 0 %}
+    - addusers:
+{% for member in user.get('group_add', []) %}
+      - {{ member }}
+{% endfor %}
+{% endif %}
+
 {{ user.username }}_user:
   user.present:
     - name: {{ user.username }}
     - shell: {{ shell }}
     - home: {{ home }}
+    - require:
+      - group: {{ user.username }}_group
 
 {{ home }}/.ssh:
   file.directory:
@@ -61,6 +73,18 @@ install_gitolite_{{ user.username }}:
     - require:
       - git: {{ home }}/gitolite
       - file: {{ home }}/bin
+
+{% if user.get('umask', False) %}
+gitolite_set_umask_for_{{ user.username }}:
+  file.replace:
+    - name: {{ home }}/.gitolite.rc
+    - pattern: "UMASK.*=>.*0.*,"
+    - repl: "UMASK => {{ user.umask }},"
+    - require:
+      - cmd: install_gitolite_{{ user.username }}
+    - require_in:
+      - cmd: setup_gitolite_{{ user.username }}
+{% endif %}
 
 setup_gitolite_{{ user.username }}:
   cmd.run:
