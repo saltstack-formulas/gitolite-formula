@@ -104,5 +104,4 @@ commit_changes_admin_repo_{{ user.username }}:
       - git: clone_admin_repo_{{ user.username }}
       - cmd: set_name_admin_repo_{{ user.username }}
       - cmd: set_email_admin_repo_{{ user.username }}
-
 {% endfor %}

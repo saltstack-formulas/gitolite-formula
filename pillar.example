@@ -10,6 +10,16 @@ gitolite:
   #admin_host: my.host.test
   users:
     - username: git
+      # from the docs:
+      #   default umask gives you perms of '0700'; see the rc file docs for
+      #   how/why you might change this
+      # If you change this, you'll need to manually adjust the permissions of already present files.
+      # This MUST be set as a string in order to preserve the leading zeros.
+      umask: '0077'
+      # Add these users to the $username group (in this example: git)
+      group_add: []
+      # group_add:
+      #   - www-data
       ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== git@example.com
       shell: /bin/zsh
       managed: True  # Manage via Salt; Include gitolite.managed!
