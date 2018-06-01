@@ -86,6 +86,18 @@ gitolite_set_umask_for_{{ user.username }}:
       - cmd: setup_gitolite_{{ user.username }}
 {% endif %}
 
+{% if user.get('git_config_keys', False) %}
+gitolite_set_git_config_keys_for_{{ user.username }}:
+  file.replace:
+    - name: {{ home }}/.gitolite.rc
+    - pattern: "GIT_CONFIG_KEYS.*=>.*,"
+    - repl: "GIT_CONFIG_KEYS => '{{ user.git_config_keys }}',"
+    - require:
+      - cmd: install_gitolite_{{ user.username }}
+    - require_in:
+      - cmd: setup_gitolite_{{ user.username }}
+{% endif %}
+
 setup_gitolite_{{ user.username }}:
   cmd.run:
     - name: {{ home }}/gitolite/src/gitolite setup -pk {{ home }}/gitolite-admin.pub
