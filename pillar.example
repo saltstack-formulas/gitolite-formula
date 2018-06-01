@@ -28,3 +28,5 @@ gitolite:
       ssh_pubkeys:
         - alice
         - bob
+      # Set GIT_CONFIG_KEYS to enable 'config key=value' in the repo config file
+      git_config_keys: '.*'
