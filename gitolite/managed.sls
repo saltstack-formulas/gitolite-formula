@@ -27,7 +27,7 @@ include:
 generate_{{ user.username }}_admin_key:
   cmd.run:  
     - name: "ssh-keygen -t rsa -N '' -f {{ admin_home }}/.ssh/id_rsa"
-    - user: {{ admin_username }}
+    - runas: {{ admin_username }}
     - creates: {{ admin_home }}/.ssh/id_rsa.pub
     - require:
       - file: {{ admin_home }}/.ssh
@@ -57,7 +57,7 @@ set_name_admin_repo_{{ user.username }}:
   cmd.run:
     - name: "git config user.name 'Salt-generated gitolite-admin'"
     - unless: "git config user.name | grep -q '.*'"
-    - user: {{ admin_username }}
+    - runas: {{ admin_username }}
     - cwd: {{ admin_home }}/gitolite-admin
     - require:
       - git: clone_admin_repo_{{ user.username }}
@@ -66,7 +66,7 @@ set_email_admin_repo_{{ user.username }}:
   cmd.run:
     - name: "git config user.email '{{ user.username }}@{{ grains['id'] }}'"
     - unless: "git config user.email | grep -q '.*'"
-    - user: {{ admin_username }}
+    - runas: {{ admin_username }}
     - cwd: {{ admin_home }}/gitolite-admin
     - require:
       - git: clone_admin_repo_{{ user.username }}
@@ -97,7 +97,7 @@ client_pubkey_{{key}}_admin_repo_{{ user.username }}:
 commit_changes_admin_repo_{{ user.username }}:
   cmd.run:
     - cwd: {{ admin_home }}/gitolite-admin
-    - user: {{ admin_username }}
+    - runas: {{ admin_username }}
     - name: "git add --all . && git commit -m 'Salt changed the config' && git push origin --all"
     - onlyif: "git status --porcelain | grep -q '.*'"
     - require:
