@@ -67,7 +67,7 @@ perl-Data-Dumper:
 install_gitolite_{{ user.username }}:
   cmd.run:
     - name: {{ home }}/gitolite/install -ln {{ home }}/bin
-    - user: {{ user.username }}
+    - runas: {{ user.username }}
     - cwd: {{ home }}
     - creates: {{ home }}/bin/gitolite
     - require:
@@ -101,7 +101,7 @@ gitolite_set_git_config_keys_for_{{ user.username }}:
 setup_gitolite_{{ user.username }}:
   cmd.run:
     - name: {{ home }}/gitolite/src/gitolite setup -pk {{ home }}/gitolite-admin.pub
-    - user: {{ user.username }}
+    - runas: {{ user.username }}
     - cwd: {{ home }}
     - env:
       - HOME: {{ home }}
