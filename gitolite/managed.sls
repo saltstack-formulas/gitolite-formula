@@ -81,9 +81,18 @@ set_email_admin_repo_{{ user.username }}:
       - git: clone_admin_repo_{{ user.username }}
 
 {% set ssh_pubkey_source = user.ssh_pubkey_source if "ssh_pubkey_source" in user else gitolite.ssh_pubkey_source %}
-{% for key in user.get("ssh_pubkeys", []) %}
+{%- for key_or_dict in user.get("ssh_pubkeys", []) %}
+{%-   set mode = 'managed' %}
+{%-   if key_or_dict is string %}
+{%-     set key = key_or_dict %}
+{%-   else %}
+{%-     set key = key_or_dict['name'] %}
+{%-     if key_or_dict.get('remove', False) %}
+{%-       set mode = 'absent' %}
+{%-     endif %}
+{%-   endif %}
 client_pubkey_{{key}}_admin_repo_{{ user.username }}:
-  file.managed:
+  file.{{ mode }}:
     - name: {{ admin_home }}/gitolite-admin/keydir/{{ key|replace("@", "_") }}.pub
     - user: {{ admin_username }}
     - group: {{ admin_username }}
@@ -92,7 +101,7 @@ client_pubkey_{{key}}_admin_repo_{{ user.username }}:
       - git: clone_admin_repo_{{ user.username }}
     - require_in:
       - cmd: commit_changes_admin_repo_{{ user.username }}
-{% endfor%}
+{%- endfor%}
 
 commit_changes_admin_repo_{{ user.username }}:
   cmd.run:
