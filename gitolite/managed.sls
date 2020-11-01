@@ -108,7 +108,7 @@ commit_changes_admin_repo_{{ user.username }}:
     - cwd: {{ admin_home }}/gitolite-admin
     - runas: {{ admin_username }}
     - name: "git add --all . && git commit -m 'Salt changed the config' && git push origin --all"
-    - onlyif: "git status --porcelain | grep -q '.*'"
+    - onlyif: "cd {{ admin_home }}/gitolite-admin && git status --porcelain | grep -q '.*'"
     - require:
       - git: clone_admin_repo_{{ user.username }}
       - cmd: set_name_admin_repo_{{ user.username }}
