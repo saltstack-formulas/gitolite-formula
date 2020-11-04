@@ -16,6 +16,7 @@ perl-Data-Dumper:
 {# variables #}
 {% set shell = get_shell(user, gitolite) %}
 {% set home = get_home(user, gitolite) %}
+{% set ssh_admin_pubkey_name = user.ssh_admin_pubkey_name if user.ssh_admin_pubkey_name is defined else gitolite.ssh_admin_pubkey_name %}
 {% set ssh_pubkey = user.ssh_pubkey if user.ssh_pubkey is defined else gitolite.ssh_pubkey %}
 
 {{ user.username }}_group:
@@ -59,7 +60,7 @@ perl-Data-Dumper:
     - require:
       - user: {{ user.username }}_user
 
-{{ home }}/gitolite-admin.pub:
+{{ home }}/{{ ssh_admin_pubkey_name }}.pub:
   file.managed:
     - contents: {{ ssh_pubkey }}
     - user: {{ user.username }}
@@ -100,14 +101,14 @@ gitolite_set_git_config_keys_for_{{ user.username }}:
 
 setup_gitolite_{{ user.username }}:
   cmd.run:
-    - name: {{ home }}/gitolite/src/gitolite setup -pk {{ home }}/gitolite-admin.pub
+    - name: {{ home }}/gitolite/src/gitolite setup -pk {{ home }}/{{ ssh_admin_pubkey_name }}.pub
     - runas: {{ user.username }}
     - cwd: {{ home }}
     - env:
       - HOME: {{ home }}
     - onchanges:
-      - file: {{ home }}/gitolite-admin.pub
+      - file: {{ home }}/{{ ssh_admin_pubkey_name }}.pub
     - require:
       - cmd: install_gitolite_{{ user.username }}
-      - file: {{ home }}/gitolite-admin.pub
+      - file: {{ home }}/{{ ssh_admin_pubkey_name }}.pub
 {% endfor %}
