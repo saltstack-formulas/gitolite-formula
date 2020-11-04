@@ -17,6 +17,7 @@ perl-Data-Dumper:
 {% set shell = get_shell(user, gitolite) %}
 {% set home = get_home(user, gitolite) %}
 {% set ssh_admin_pubkey_name = user.ssh_admin_pubkey_name if user.ssh_admin_pubkey_name is defined else gitolite.ssh_admin_pubkey_name %}
+{% set ssh_admin_pubkey_source = user.ssh_admin_pubkey_source if user.ssh_admin_pubkey_source is defined else gitolite.ssh_admin_pubkey_source %}
 {% set ssh_pubkey = user.ssh_pubkey if user.ssh_pubkey is defined else gitolite.ssh_pubkey %}
 
 {{ user.username }}_group:
@@ -62,7 +63,11 @@ perl-Data-Dumper:
 
 {{ home }}/{{ ssh_admin_pubkey_name }}.pub:
   file.managed:
+{%- if ssh_admin_pubkey_source %}
+    - source: {{ ssh_admin_pubkey_source }}
+{%- else %}
     - contents: {{ ssh_pubkey }}
+{%- endif %}
     - user: {{ user.username }}
 
 install_gitolite_{{ user.username }}:
