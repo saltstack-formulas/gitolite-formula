@@ -3,8 +3,10 @@ gitolite:
   home: /home
   repository_url: https://github.com/sitaramc/gitolite.git
   revision: v3.6.1
+  ssh_admin_pubkey_name: gitolite-admin
+  ssh_admin_pubkey_source: salt://ssh_keys/admin.pub
   ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== admin@example.com # default admin key if user's ssh_pubkey is not defined
-  ssh_pubkey_source': salt://ssh_keys  # default SSH pubkey source
+  ssh_pubkey_source: salt://ssh_keys  # default SSH pubkey source
   # In some setups SSH is not available on localhost
   admin_host: localhost
   #admin_host: my.host.test
@@ -20,6 +22,8 @@ gitolite:
       group_add: []
       # group_add:
       #   - www-data
+      ssh_admin_pubkey_name: gitolite-admin
+      ssh_admin_pubkey_source: salt://ssh_keys/admin.pub
       ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== git@example.com
       shell: /bin/zsh
       managed: True  # Manage via Salt; Include gitolite.managed!
