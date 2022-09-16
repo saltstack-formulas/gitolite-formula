@@ -62,6 +62,15 @@ perl-Data-Dumper:
     - require:
       - user: {{ user.username }}_user
 
+gitolite--logdir_{{ user.username }}:
+  file.directory:
+    - name: {{ home }}/.gitolite/logs
+    - user: {{ user.username }}
+    - group: {{ user.username }}
+    - makedirs: True
+    - require:
+      - user: {{ user.username }}_user
+
 {{ home }}/{{ ssh_admin_pubkey_name }}.pub:
   file.managed:
 {%- if ssh_admin_pubkey_source %}
@@ -81,6 +90,18 @@ install_gitolite_{{ user.username }}:
       - git: {{ home }}/gitolite
       - file: {{ home }}/bin
 
+setup_gitolite_rc_{{ user.username }}:
+  cmd.run:
+    - name: sh -c '{{ home }}/gitolite/src/gitolite print-default-rc > {{ home }}/.gitolite.rc'
+    - runas: {{ user.username }}
+    - cwd: {{ home }}
+    - env:
+      - HOME: {{ home }}
+    - require:
+      - cmd: install_gitolite_{{ user.username }}
+      - file: gitolite--logdir_{{ user.username }}
+    - creates: {{ home }}/.gitolite.rc
+
 {% if user.get('umask', False) %}
 gitolite_set_umask_for_{{ user.username }}:
   file.replace:
@@ -89,6 +110,8 @@ gitolite_set_umask_for_{{ user.username }}:
     - repl: "UMASK => {{ user.umask }},"
     - require:
       - cmd: install_gitolite_{{ user.username }}
+    - require:
+      - cmd: setup_gitolite_rc_{{ user.username }}
     - require_in:
       - cmd: setup_gitolite_{{ user.username }}
 {% endif %}
@@ -101,6 +124,8 @@ gitolite_set_git_config_keys_for_{{ user.username }}:
     - repl: "GIT_CONFIG_KEYS => '{{ user.git_config_keys }}',"
     - require:
       - cmd: install_gitolite_{{ user.username }}
+    - require:
+      - cmd: setup_gitolite_rc_{{ user.username }}
     - require_in:
       - cmd: setup_gitolite_{{ user.username }}
 {% endif %}
