@@ -35,6 +35,7 @@ perl-Data-Dumper:
     - name: {{ user.username }}
     - shell: {{ shell }}
     - home: {{ home }}
+    - gid: {{ user.username }}
     - require:
       - group: {{ user.username }}_group
 
