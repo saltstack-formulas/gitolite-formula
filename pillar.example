@@ -4,6 +4,7 @@ gitolite:
   repository_url: https://github.com/sitaramc/gitolite.git
   revision: v3.6.1
   ssh_admin_pubkey_name: gitolite-admin
+  ssh_admin_pubkey_type: ed25519
   ssh_admin_pubkey_source: salt://ssh_keys/admin.pub
   ssh_pubkey: ssh-rsa here_goes_your_public_ssh_key== admin@example.com # default admin key if user's ssh_pubkey is not defined
   ssh_pubkey_source: salt://ssh_keys  # default SSH pubkey source
