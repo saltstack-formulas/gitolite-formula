@@ -11,6 +11,7 @@ include:
 {% set ssh_admin_pubkey_name = user.ssh_admin_pubkey_name if user.ssh_admin_pubkey_name is defined else gitolite.ssh_admin_pubkey_name %}
 {% set admin_home = "{}-admin".format(home) %}
 {% set admin_username = "{}-admin".format(user.username) %}
+{% set admin_pubkey_type = gitolite.ssh_admin_pubkey_type %}
 
 {{ user.username }}_admin_user:
   user.present:
@@ -27,9 +28,9 @@ include:
 
 generate_{{ user.username }}_admin_key:
   cmd.run:
-    - name: "ssh-keygen -t rsa -N '' -f {{ admin_home }}/.ssh/id_rsa"
+    - name: "ssh-keygen -t {{ admin_pubkey_type }} -N '' -f {{ admin_home }}/.ssh/id_{{ admin_pubkey_type }}"
     - runas: {{ admin_username }}
-    - creates: {{ admin_home }}/.ssh/id_rsa.pub
+    - creates: {{ admin_home }}/.ssh/id_{{ admin_pubkey_type }}.pub
     - require:
       - file: {{ admin_home }}/.ssh
       - user: {{ user.username }}_admin_user
@@ -40,7 +41,7 @@ extend:
   {{ home }}/{{ ssh_admin_pubkey_name }}.pub:
     file.copy:
       - force: True
-      - source: {{ admin_home }}/.ssh/id_rsa.pub
+      - source: {{ admin_home }}/.ssh/id_{{ admin_pubkey_type }}.pub
       - onchanges:
         - cmd: generate_{{ user.username }}_admin_key
 
